@@ -2,7 +2,8 @@ import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState } from 'react';
 
 import './App.css';
-
+import BlockNumber from './components/BlockNumber';
+import Transactions from './components/Transactions';
 // Refer to the README doc for more information about using API
 // keys in client-side code. You should never do this in production
 // level code.
@@ -30,7 +31,10 @@ function App() {
     getBlockNumber();
   });
 
-  return <div className="App">Block Number: {blockNumber}</div>;
+  return (<div className="App">
+    <BlockNumber blockNumber={blockNumber} />
+    <Transactions blockNumber={blockNumber} alchemy={alchemy} />
+  </div>);
 }
 
 export default App;
