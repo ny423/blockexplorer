@@ -2,8 +2,12 @@ import { Alchemy, Network } from 'alchemy-sdk';
 import { useEffect, useState } from 'react';
 
 import './App.css';
-import BlockNumber from './components/BlockNumber';
-import Transactions from './components/Transactions';
+import { Route, Switch, Router } from "react-router-dom";
+import BlockTransactions from './pages/Block';
+import Home from './pages/Home';
+import history from './router/history';
+import Transaction from './pages/Transaction';
+
 // Refer to the README doc for more information about using API
 // keys in client-side code. You should never do this in production
 // level code.
@@ -23,18 +27,32 @@ const alchemy = new Alchemy(settings);
 function App() {
   const [blockNumber, setBlockNumber] = useState();
 
-  useEffect(() => {
-    async function getBlockNumber() {
-      setBlockNumber(await alchemy.core.getBlockNumber());
-    }
+  async function getBlockNumber() {
+    setBlockNumber(await alchemy.core.getBlockNumber());
+  }
 
+  useEffect(() => {
     getBlockNumber();
   });
 
-  return (<div className="App">
-    <BlockNumber blockNumber={blockNumber} />
-    <Transactions blockNumber={blockNumber} alchemy={alchemy} />
-  </div>);
+  return (
+    <Router history={history}>
+      <Switch>
+        <Route exact path="/">
+          <Home />
+        </Route>
+        <Route path="/blocknumber/:blockNumber">
+          <BlockTransactions alchemy={alchemy} latestBlock={blockNumber} />
+        </Route>
+        <Route path="/blocknumber/">
+          <BlockTransactions alchemy={alchemy} latestBlock={blockNumber} />
+        </Route>
+        <Route path="/tx/:hash">
+          <Transaction alchemy={alchemy} />
+        </Route>
+      </Switch>
+    </Router>
+  )
 }
 
 export default App;
